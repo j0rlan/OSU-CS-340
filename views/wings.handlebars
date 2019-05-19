@@ -1,0 +1,22 @@
+<div class="container">
+   <h3>Museum Wings</h3>
+</div>
+<div class="container">
+   <form action="/wings" method="post" id="addWing">
+      <fieldset>
+         <legend>Add Wing</legend>
+         <div>
+         <input type="text" name="name" placeholder="Name of Wing" id="name">
+         </div>
+         <div>
+         <input onfocus="(this.type='time')" name="open" placeholder="Opening Time" id="open">
+         </div>
+         <div>
+         <input onfocus="(this.type='time')" name="close" placeholder="Closing Time" id="close">
+         </div>
+         <input type="submit" name="add" value="add wing" id="addButton">
+      </fieldset>
+   </form>
+</div>
+<div class="container" id="wingList"><table>name open close [edit] [delete]</table></div>
+<script src="wingScript.js"></script>

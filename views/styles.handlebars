@@ -1,0 +1,19 @@
+<div class="container">
+   <h3>Styles</h3>
+</div>
+<div class="container">
+   <form action="/styles" method="post" id="addStyle">
+      <fieldset>
+         <legend>Add Style</legend>
+         <div>
+         <input type="text" name="name" placeholder="Style" id="name">
+         </div>
+         <div>
+         <textarea form="addStyle" name="description" placeholder="Description of Style" id="description"></textarea>
+         </div>
+         <input type="submit" name="add" value="add style" id="addButton">
+      </fieldset>
+   </form>
+</div>
+<div class="container" id="styleList"><table>name description [edit] [delete]</table></div>
+<script src="styleScript.js"></script>

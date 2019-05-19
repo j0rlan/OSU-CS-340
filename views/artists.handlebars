@@ -1,0 +1,28 @@
+<div class="container">
+   <h3>Artists</h3>
+</div>
+<div class="container">
+   <form action="/" method="post" id="addArtist">
+      <fieldset>
+         <legend>Add Artist</legend>
+         <div>
+         <input type="text" name="fname" placeholder="First Name" id="fname">
+         </div>
+         <div>
+         <input type="text" name="lname" placeholder="Last Name" id="lname">
+         </div>
+         <div>
+         <input onfocus="(this.type='date')" name="born" placeholder="Born" id="born">
+         </div>
+         <div>
+         <input onfocus="(this.type='date')" name="died" placeholder="Died" id="died">
+         </div>
+         <div>
+         <textarea form="addArtist" placeholder="Bio" id="bio"></textarea>
+         </div>
+         <input type="submit" name="add" value="add artist" id="addButton">
+      </fieldset>
+   </form>
+</div>
+<div class="container" id="artistList"><table>fname lname born died bio [edit] [delete]</table></div>
+<script src="artistScript.js"></script>

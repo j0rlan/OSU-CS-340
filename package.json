@@ -1,0 +1,13 @@
+{
+  "name": "MuseumDB",
+  "version": "0.0.1",
+  "main": "node.js",
+  "author": "Database Defenders",
+  "description": "Museum content database",
+  "dependencies": {
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.2",
+    "forever": "^1.0.0",
+    "request": "^2.88.0"
+  }
+}

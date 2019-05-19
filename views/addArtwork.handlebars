@@ -1,0 +1,39 @@
+<div class="container">
+   <h3>Artwork</h3>
+</div>
+<div class="container">
+   <form autocomplete="off" action="/" method="post" id="addArtwork">
+      <fieldset>
+         <legend>Add Artwork</legend>
+         <div>
+            <input type="text" name="title" placeholder="Title" id="title">
+         </div>
+         <div class="autocomplete">
+            <input type="text" name="artist" placeholder="Artist" id="artist">
+            <input type="button" value="New Artist" id="newArtistButton">
+         </div>
+         <div class="autocomplete">
+            <input type="text" name="medium" placeholder="Medium" id="medium">
+            <input type="button" value="New Medium" id="newMediumButton">
+         </div>
+         <div class="autocomplete">
+            <input type="text" name="style" placeholder="Style" id="style">
+            <input type="button" value="New Style" id="newStyleButton">
+         </div>
+         <div>
+            <input onfocus="(this.type='date')" name="completed" placeholder="Completion Date" id="completed">
+         </div>
+         <div>
+            <input type="text" name="city" placeholder="City of Origin" id="city">
+         </div>
+         <div>
+            <input type="text" name="country" placeholder="Country of Origin" id="country">
+         </div>
+         <div>
+            <textarea form="addArtwork" placeholder="Description" id="description"></textarea>
+         </div>
+         <input type="submit" name="add" value="add artwork" id="addButton">
+      </fieldset>
+   </form>
+</div>
+<script src="addArtworkScript.js"></script>
