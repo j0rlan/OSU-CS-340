@@ -3,17 +3,15 @@ document.addEventListener("DOMContentLoaded", initPage);
 function initAddButton(event){
    event.preventDefault();
    var payload = {"add":1}; 
-   payload.name = document.getElementById("exerciseName").value;
+   payload.name = document.getElementById("name").value;
    if(payload.name == ""){
-      alert("Exercise must be named");
+      alert("Wing must be named");
       return;
    }
-   payload.reps = document.getElementById("exerciseReps").value;
-   payload.weight = document.getElementById("exerciseWeight").value;
-   payload.date = document.getElementById("exerciseDate").value;
-   payload.lbs = document.getElementById("exerciseUnits").value;
+   payload.open_time = document.getElementById("open").value;
+   payload.close_time = document.getElementById("close").value;
    var req = new XMLHttpRequest();
-   req.open("POST", "/", true);
+   req.open("POST", "/wings", true);
    req.setRequestHeader("Content-Type", "application/json");
    req.send(JSON.stringify(payload));
    req.addEventListener("load",function(){
@@ -147,7 +145,7 @@ function initEditButtons(button){
 function initPage(){
 
    buildTable();
-   // bindButtons();
+   bindButtons();
 };
 
 

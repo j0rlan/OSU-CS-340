@@ -24,5 +24,28 @@
       </fieldset>
    </form>
 </div>
-<div class="container" id="artistList"><table>fname lname born died bio [edit] [delete]</table></div>
+<div class="container" id="artistList">
+<table>
+	<thead>
+		<th> First Name </th>
+		<th> Last Name </th>
+		<th> Born </th>
+		<th> Died </th>
+		<th> Bio </th>
+	</thead>
+	<tbody>
+		{{#each artists}}
+		<tr>
+			<td>{{this.first_name}}</td>
+			<td>{{this.last_name}}</td>
+			<td>{{this.born}}</td>
+			<td>{{this.died}}</td>
+			<td>{{this.bio}}</td>
+			<td><button>Delete</button></td>
+			<td><a href="?">Update</a></td>
+		</tr>
+		{{/each}}
+	</tbody>
+</table>
+</div>
 <script src="artistScript.js"></script>

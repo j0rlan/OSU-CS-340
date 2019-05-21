@@ -3,15 +3,15 @@ document.addEventListener("DOMContentLoaded", initPage);
 function initAddButton(event){
    event.preventDefault();
    var payload = {"add":1}; 
-   payload.fname = document.getElementById("First Name").value;
+   payload.fname = document.getElementById("fname").value;
    if(payload.fname == ""){
       alert("Artist must be named");
       return;
    }
-   payload.lname = document.getElementById("Last Name").value;
-   payload.born = document.getElementById("Born").value;
-   payload.died = document.getElementById("Died").value;
-   payload.bio = document.getElementById("Bio").value;
+   payload.lname = document.getElementById("lname").value;
+   payload.born = document.getElementById("born").value;
+   payload.died = document.getElementById("died").value;
+   payload.bio = document.getElementById("bio").value;
    var req = new XMLHttpRequest();
    req.open("POST", "/artists", true);
    req.setRequestHeader("Content-Type", "application/json");
@@ -137,8 +137,8 @@ function initEditButtons(button){
 
 
 function initPage(){
-
    buildTable();
+   bindButtons();
 };
 
 
@@ -228,7 +228,6 @@ function buildTable(){
          //add table to html page body
          var artistTable = document.getElementById("artistTable");
          artistTable.replaceChild(table, artistTable.firstChild);
-         bindButtons();
 
       }
       else {
