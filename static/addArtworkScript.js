@@ -141,9 +141,24 @@ document.addEventListener("click", function (e) {
 }
 
 function bindButtons(){
+   try {
    document.getElementById("newArtistButton").addEventListener("click", initNewArtistButton);
+   }
+   catch(err) {
+      console.log(err);
+   }
+   try {
    document.getElementById("newMediumButton").addEventListener("click", initNewMediumButton);
+   }
+   catch(err) {
+      console.log(err);
+   }
+   try {
    document.getElementById("newStyleButton").addEventListener("click", initNewStyleButton);
+   }
+   catch(err) {
+      console.log(err);
+   }
 };
 
 function addAutocomplete(){
