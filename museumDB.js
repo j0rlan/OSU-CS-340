@@ -198,37 +198,45 @@ app.post('/artists', function(req, res){
 });
 
 app.get('/mediums', function(req, res){
-         res.render('mediums');
+   res.render('mediums');
 });
 
 app.get('/styles', function(req, res){
-   var context = {};
-   var query = "SELECT style_name, description FROM museum_style";
-   mysql.pool.query(query, function(error, results, fields){
-      if(error){
-         res.write(JSON.stringify(error));
-         res.end();
-      }
-      else {
-         context.styles = results;
-         res.render('styles', context);
-      }
-   });
+   res.render('styles');
 });
 
 app.post('/styles', function(req, res){
    console.log(req.body);
-   var name = req.body.name,
-   description = req.body.description;
-var query = "INSERT INTO museum_style (\`style_name\`, \`description\`) VALUES ('" + name + "', '" + description + 
-   "')";
-mysql.pool.query(query, function(err, result){
-   if(err){
-      console.log(query);
-      res.write(JSON.stringify(err));
-      res.end();
-   }	
-});
+   if (req.body.add){
+      var name = req.body.name;
+      var description = req.body.description;
+      var query = "INSERT INTO museum_style (\`style_name\`, \`description\`) VALUES ('";
+      query += name + "', '" + description + "')";
+      mysql.pool.query(query, function(err, result){
+         if(err){
+            console.log(query);
+            res.write(JSON.stringify(err));
+            res.end();
+         }	
+      });
+   }
+
+
+   if(req.body.init){
+      var query = "SELECT style_name as id, style_name, description FROM museum_style";
+      mysql.pool.query(query, function(err, rows, fields) {
+         if (err) {
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else {
+            var context = {};
+            res.json(rows);
+         }
+      });
+   }
+
 });
 
 app.post('/mediums', function(req, res){

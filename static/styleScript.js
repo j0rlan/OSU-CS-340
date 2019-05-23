@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", initPage);
 
-
 function initDeleteButtons(button){
    button.addEventListener("click",function(event){
       event.preventDefault();
@@ -26,7 +25,7 @@ function submitEdit(id){
    var payload = {"edit":id}
    payload.title = document.getElementById("titleEdit").value;
    payload.artist = document.getElementById("artistEdit").value;
-   payload.medium = document.getElementById("mediumEdit").value;
+   payload.style = document.getElementById("styleEdit").value;
    payload.date = document.getElementById("dateEdit").value;
    payload.lbs = document.getElementById("lbsEdit").value;
    req.open("POST", "/", true);
@@ -58,12 +57,12 @@ function buildForm(id){
    artistField.type = "number";
    artistField.value = document.getElementById("artist"+id).textContent;
    artist.appendChild(artistField);
-   var medium = document.createElement("td");
-   var mediumField = document.createElement("input");
-   mediumField.id = "mediumEdit";
-   mediumField.type = "number";
-   mediumField.value = document.getElementById("medium"+id).textContent;
-   medium.appendChild(mediumField);
+   var style = document.createElement("td");
+   var styleField = document.createElement("input");
+   styleField.id = "styleEdit";
+   styleField.type = "number";
+   styleField.value = document.getElementById("style"+id).textContent;
+   style.appendChild(styleField);
    var date = document.createElement("td");
    var dateField = document.createElement("input");
    dateField.id = "dateEdit";
@@ -98,7 +97,7 @@ function buildForm(id){
 
    form.appendChild(title);
    form.appendChild(artist);
-   form.appendChild(medium);
+   form.appendChild(style);
    form.appendChild(origin);
    form.appendChild(style);
    form.appendChild(date);
@@ -144,7 +143,7 @@ function buildTable(){
 
    //create header row
    var row = table.firstElementChild;
-   var headerTitles = ["Title", "Artist(s)", "Medium(s)", "Origin", "Style", "Date", "Wing"];
+   var headerTitles = ["Style", "Description"];
    for(var i = 0; i < 7; i++) {
       var header = document.createElement("th");
       header.textContent = headerTitles[i];
@@ -154,7 +153,7 @@ function buildTable(){
    //fill data rows
 
    var req = new XMLHttpRequest();
-   req.open("POST", "/browse", true);
+   req.open("POST", "/styles", true);
    req.setRequestHeader("Content-Type", "application/json");
    req.send(JSON.stringify({"init":1}));
    req.addEventListener("load", function(){
@@ -163,34 +162,14 @@ function buildTable(){
          console.log(response);
          for(var i in response) {
             var row = document.createElement("tr");
-            var title = document.createElement("td");
-            title.textContent = response[i].Title;
-            title.id = "title"+response[i].id;
-            row.appendChild(title);
-            var artist = document.createElement("td");
-            artist.textContent = response[i].Artist;
-            artist.id = "artist"+response[i].id;
-            row.appendChild(artist);
-            var medium = document.createElement("td");
-            medium.textContent = response[i].Medium;
-            medium.id = "medium"+response[i].id;
-            row.appendChild(medium);
-            var origin = document.createElement("td");
-            origin.textContent = response[i].Origin;
-            origin.id = "origin"+response[i].id;
-            row.appendChild(origin);
-            var style = document.createElement("td");
-            style.textContent = response[i].Style;
-            style.id = "style"+response[i].id;
-            row.appendChild(style);
-            var date = document.createElement("td");
-            date.textContent = response[i].date_completed;
-            date.id = "date"+response[i].id;
-            row.appendChild(date);
-            var wing = document.createElement("td");
-            wing.textContent = response[i].wing_name;
-            wing.id = "wing"+response[i].id;
-            row.appendChild(wing);
+            var style_name = document.createElement("td");
+            style_name.textContent = response[i].style_name;
+            style_name.id = "style_name"+response[i].id;
+            row.appendChild(style_name);
+            var description = document.createElement("td");
+            description.textContent = response[i].description;
+            description.id = "description"+response[i].id;
+            row.appendChild(description);
 
             //create edit and delete buttons
             var commandButtons = document.createElement("td");
@@ -217,8 +196,7 @@ function buildTable(){
 
 
          //add table to html page body
-         var newTable = document.getElementById("artList");
-         //var oldTable = document.getElementById("artList");
+         var newTable = document.getElementById("styleList");
          newTable.replaceChild(table, newTable.firstChild);
          bindButtons();
 
