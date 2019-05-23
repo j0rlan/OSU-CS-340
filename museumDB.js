@@ -118,17 +118,35 @@ app.get('/wings', function(req, res){
 });
 
 app.post('/wings', function(req, res){
-   var wing_name = req.body.name;
-   var	open_time = req.body.open_time;
-   var	close_time = req.body.close_time;
-   var query = "INSERT INTO museum_wing (\`name\`, \`open_time\`, \`close_time\`) VALUES ('" + wing_name + "', '" + open_time + "', '" + close_time + "')";
-   mysql.pool.query(query, function(err, result){
-      if(err){
-         console.log(err);
-         res.write(JSON.stringify(err));
-         res.end();
-      }
-   });
+   if(req.body.add) {
+      var wing_name = req.body.name;
+      var	open_time = req.body.open_time;
+      var	close_time = req.body.close_time;
+      var query = "INSERT INTO museum_wing (\`name\`, \`open_time\`, \`close_time\`) VALUES ('" + wing_name + "', '" + open_time + "', '" + close_time + "')";
+      mysql.pool.query(query, function(err, result){
+         if(err){
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+      });
+   }
+
+   if(req.body.init){
+      var query = "SELECT name as id, name, open_time, close_time FROM museum_wing";
+      mysql.pool.query(query, function(err, rows, fields) {
+         if (err) {
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else {
+            var context = {};
+            context.artists = rows;
+            res.json(rows);
+         }
+      });
+   }
 });
 
 app.get('/artists', function(req, res){
@@ -173,25 +191,25 @@ app.post('/artists', function(req, res){
    }
 
    if(req.body.init){
-   var query = "SELECT artist_id as id, first_name, last_name, born, died, bio FROM museum_artist";
-   mysql.pool.query(query, function(err, rows, fields) {
-      if (err) {
-         console.log(err);
-         res.write(JSON.stringify(err));
-         res.end();
-      }
-      else {
-         for (e of rows) {
-            let born = new Date(e.born);
-            e.born = (born.getUTCFullYear() + "-" + (born.getUTCMonth()+1) + "-" + born.getUTCDate());
-            let died = new Date(e.died);
-            e.died = (died.getUTCFullYear() + "-" + (died.getUTCMonth()+1) + "-" + died.getUTCDate());
+      var query = "SELECT artist_id as id, first_name, last_name, born, died, bio FROM museum_artist";
+      mysql.pool.query(query, function(err, rows, fields) {
+         if (err) {
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
          }
-         var context = {};
-         context.artists = rows;
-         res.json(rows);
-      }
-   });
+         else {
+            for (e of rows) {
+               let born = new Date(e.born);
+               e.born = (born.getUTCFullYear() + "-" + (born.getUTCMonth()+1) + "-" + born.getUTCDate());
+               let died = new Date(e.died);
+               e.died = (died.getUTCFullYear() + "-" + (died.getUTCMonth()+1) + "-" + died.getUTCDate());
+            }
+            var context = {};
+            context.artists = rows;
+            res.json(rows);
+         }
+      });
    }
 
 });

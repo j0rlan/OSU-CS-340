@@ -92,3 +92,11 @@ input[type=submit] {
 td {
    padding: 0.5em;
 }
+
+[id*='edit_'] {
+   width: 5em;
+}
+
+[id*='delete_'] {
+   width: 5em;
+}
