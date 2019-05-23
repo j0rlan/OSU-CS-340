@@ -150,24 +150,7 @@ app.post('/wings', function(req, res){
 });
 
 app.get('/artists', function(req, res){
-   var context = {};
-   var query = "SELECT artist_id, first_name, last_name, born, died, bio FROM museum_artist";
-   mysql.pool.query(query, function(error, results, fields){
-      if(error) {
-         res.write(JSON.stringify(error));
-         res.end();
-      }
-      else {
-         for (e of results) {
-            let born = new Date(e.born);
-            e.born = (born.getUTCFullYear() + "-" + (born.getUTCMonth()+1) + "-" + born.getUTCDate());
-            let died = new Date(e.died);
-            e.died = (died.getUTCFullYear() + "-" + (died.getUTCMonth()+1) + "-" + died.getUTCDate());
-         }
-         context.artists = results;
-         res.render('artists', context);
-      }
-   });
+   res.render('artists');
 });
 
 app.post('/artists', function(req, res){
@@ -215,18 +198,7 @@ app.post('/artists', function(req, res){
 });
 
 app.get('/mediums', function(req, res){
-   var context = {};
-   var query = "SELECT medium_name, description FROM museum_medium";
-   mysql.pool.query(query, function(error, results, fields){
-      if(error){
-         res.write(JSON.stringify(error));
-         res.end();
-      }
-      else {
-         context.mediums = results;
-         res.render('mediums', context);
-      }
-   });
+         res.render('mediums');
 });
 
 app.get('/styles', function(req, res){
@@ -260,20 +232,37 @@ mysql.pool.query(query, function(err, result){
 });
 
 app.post('/mediums', function(req, res){
-   console.log(req.body.description);
-   var name = req.body.name,
-   description = req.body.description;	
-var query = "INSERT INTO museum_medium (\`medium_name\`, \`description\`) VALUES ('" + name + "', '" + description + "')";
-mysql.pool.query(query, function(err, result){
-   if(err){
-      console.log(err);
-      res.write(JSON.stringify(err));
-      res.end();
+   if (req.body.add){
+      console.log(req.body.description);
+      var name = req.body.name;
+      var description = req.body.description;	
+      var query = "INSERT INTO museum_medium (\`medium_name\`, \`description\`) VALUES ('" + name + "', '" + description + "')";
+      mysql.pool.query(query, function(err, result){
+         if(err){
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else {
+            console.log(query);
+         }
+      });
    }
-   else {
-      console.log(query);
+
+   if(req.body.init){
+      var query = "SELECT medium_name as id, medium_name, description FROM museum_medium";
+      mysql.pool.query(query, function(err, rows, fields) {
+         if (err) {
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else {
+            var context = {};
+            res.json(rows);
+         }
+      });
    }
-});
 });
 
 app.use(function(req, res){
