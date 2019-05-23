@@ -12,7 +12,24 @@ function initNewStyleButton(event){
    window.open('/styles', '_blank');
 };
 
-var artists = ["Pablo Picasso", "Johann Bach", "Ernest Hemmingway"];
+var artists = [];
+var req = new XMLHttpRequest();
+var payload = {"artists":1};
+req.open("POST", "/addArtwork", true);
+req.setRequestHeader("Content-Type", "application/json");
+req.send(JSON.stringify(payload));
+req.addEventListener("load", function(){
+   if(req.status >= 200 && req.status < 400){
+      var list = JSON.parse(req.response);
+      console.log(list);
+      for (e in list) {
+         artists.push(list[e].first_name + " " + list[e].last_name);
+      }
+  }
+   else {
+      console.log("Error: " + req.statusText);
+   }
+});
 
 var mediums = ["Painting", "Music", "Literature"];
 

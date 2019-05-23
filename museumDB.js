@@ -46,46 +46,27 @@ mysql.pool.query(query, function(error, results, fields){
 app.get("/addArtwork", function(req, res){
    var context = {};
    var wingQuery = "SELECT name FROM museum_wing";
-   mysql.pool.query(wingQuery, function(err, result){
-      if(err){
-         res.write(JSON.stringify(err));
-         res.end();
-      }
-      else {
-         context.wing = result;
-      }
-   });
-   var medQuery = "SELECT medium_name FROM museum_medium";
-   mysql.pool.query(medQuery, function(err, result){
-      if(err){
-         res.write(JSON.stringify(err));
-         res.end();
-      }
-      else {
-         context.medium = result;
-      }
-   });
-   var styleQuery = "SELECT style_name FROM museum_style";
-   mysql.pool.query(styleQuery, function(err, result){
-      if(err){
-         res.write(JSON.stringify(err));
-         res.end();
-      }
-      else {
-         context.style = result;
-      }
-   });
-   var artistQuery = "SELECT first_name, last_name FROM museum_artist";
-   mysql.pool.query(artistQuery, function(err, result){
-      if(err){
-         res.write(JSON.stringify(err));
-         res.end();
-      }
-      else {
-         context.artist = result;
-      }
-   });
    res.render('addArtwork', context);
+});
+
+app.post('/addArtwork', function(req, res){
+   if (req.body.artists) {
+      console.log("artists req");
+      var query = "SELECT first_name, last_name FROM museum_artist";
+      mysql.pool.query(query, function(err, rows, fields){
+         if (err) {
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else {
+            var context = {};
+            context.results = rows;
+            console.log(rows);
+            res.json(context.results);
+            res.send();
+         }
+      });
+   }
 });
 
 app.get('/wings', function(req, res){
@@ -147,8 +128,8 @@ app.post('/artists', function(req, res){
    born = req.body.born,
    died = req.body.died,
    bio = req.body.bio;
-var params = [fname, lname, born, died, bio]
-   var query = "INSERT INTO museum_artist (\`first_name\`, \`last_name\`, \`born\`, \`died\`, \`bio\`) VALUES (?, ?, ?, ?, ?)";
+var params = [fname, lname, born, died, bio];
+var query = "INSERT INTO museum_artist (\`first_name\`, \`last_name\`, \`born\`, \`died\`, \`bio\`) VALUES (?, ?, ?, ?, ?)";
 mysql.pool.query(query, params, function(err, result){
    if (err){
       console.log(err);
