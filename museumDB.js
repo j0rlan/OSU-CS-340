@@ -51,19 +51,47 @@ app.get("/addArtwork", function(req, res){
 
 app.post('/addArtwork', function(req, res){
    if (req.body.artists) {
-      console.log("artists req");
       var query = "SELECT first_name, last_name FROM museum_artist";
+      var context = {};
+      context.results = {};
       mysql.pool.query(query, function(err, rows, fields){
          if (err) {
             res.write(JSON.stringify(err));
             res.end();
          }
          else {
-            var context = {};
-            context.results = rows;
-            console.log(rows);
-            res.json(context.results);
-            res.send();
+            context.results.artists = rows;
+            query = "SELECT medium_name FROM museum_medium";
+            mysql.pool.query(query, function(err, rows, fields){
+               if (err) {
+                  res.write(JSON.stringify(err));
+                  res.end();
+               }
+               else {
+                  context.results.mediums = rows;
+                  query = "SELECT style_name FROM museum_style";
+                  mysql.pool.query(query, function(err, rows, fields){
+                     if (err) {
+                        res.write(JSON.stringify(err));
+                        res.end();
+                     }
+                     else {
+                        context.results.styles = rows;
+                        query = "SELECT name FROM museum_wing";
+                        mysql.pool.query(query, function(err, rows, fields){
+                           if (err) {
+                              res.write(JSON.stringify(err));
+                              res.end();
+                           }
+                           else {
+                              context.results.wings = rows;
+                              res.json(context.results);
+                           }
+                        });
+                     }
+                  });
+               }
+            });
          }
       });
    }

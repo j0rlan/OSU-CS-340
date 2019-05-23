@@ -13,6 +13,9 @@ function initNewStyleButton(event){
 };
 
 var artists = [];
+var mediums = [];
+var styles = [];
+var wings = [];
 var req = new XMLHttpRequest();
 var payload = {"artists":1};
 req.open("POST", "/addArtwork", true);
@@ -22,18 +25,18 @@ req.addEventListener("load", function(){
    if(req.status >= 200 && req.status < 400){
       var list = JSON.parse(req.response);
       console.log(list);
-      for (e in list) {
-         artists.push(list[e].first_name + " " + list[e].last_name);
-      }
+      for (e in list.artists) { artists.push(list.artists[e].first_name + " " + list.artists[e].last_name); }
+
+      for (e in list.mediums) { mediums.push(list.mediums[e].medium_name); }
+
+      for (e in list.styles) { styles.push(list.styles[e].style_name); }
+
+      for (e in list.wings) { wings.push(list.wings[e].name); }
   }
    else {
       console.log("Error: " + req.statusText);
    }
 });
-
-var mediums = ["Painting", "Music", "Literature"];
-
-var styles = ["Cubism", "Baroque", "Prose"];
 
 function initPage(){
    bindButtons();
@@ -146,5 +149,6 @@ function bindButtons(){
 function addAutocomplete(){
    autocomplete(document.getElementById("artist"), artists);
    autocomplete(document.getElementById("style"), styles);
-   //autocomplete(document.getElementById("medium"), mediums);
+   autocomplete(document.getElementById("medium"), mediums);
+   autocomplete(document.getElementById("wing"), wings);
 }
