@@ -6,46 +6,23 @@
       <fieldset>
          <legend>Add Artist</legend>
          <div>
-         <input type="text" name="fname" placeholder="First Name" id="fname">
+            <input type="text" name="fname" placeholder="First Name" id="fname">
          </div>
          <div>
-         <input type="text" name="lname" placeholder="Last Name" id="lname">
+            <input type="text" name="lname" placeholder="Last Name" id="lname">
          </div>
          <div>
-         <input onfocus="(this.type='date')" name="born" placeholder="Born" id="born">
+            <input onfocus="(this.type='date')" name="born" placeholder="Born" id="born">
          </div>
          <div>
-         <input onfocus="(this.type='date')" name="died" placeholder="Died" id="died">
+            <input onfocus="(this.type='date')" name="died" placeholder="Died" id="died">
          </div>
          <div>
-         <textarea form="addArtist" placeholder="Bio" id="bio"></textarea>
+            <textarea form="addArtist" placeholder="Bio" id="bio"></textarea>
          </div>
          <input type="submit" name="add" value="add artist" id="addButton">
       </fieldset>
    </form>
 </div>
-<div class="container" id="artistList">
-<table>
-	<thead>
-		<th> First Name </th>
-		<th> Last Name </th>
-		<th> Born </th>
-		<th> Died </th>
-		<th> Bio </th>
-	</thead>
-	<tbody>
-		{{#each artists}}
-		<tr>
-			<td>{{this.first_name}}</td>
-			<td>{{this.last_name}}</td>
-			<td>{{this.born}}</td>
-			<td>{{this.died}}</td>
-			<td>{{this.bio}}</td>
-			<td><button>Delete</button></td>
-			<td><button>Update</button></td>
-		</tr>
-		{{/each}}
-	</tbody>
-</table>
-</div>
+<div id="artistList"><div></div></div>
 <script src="artistScript.js"></script>

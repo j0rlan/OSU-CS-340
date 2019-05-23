@@ -1,33 +1,5 @@
 document.addEventListener("DOMContentLoaded", initPage);
 
-function initAddButton(event){
-   event.preventDefault();
-   var payload = {"add":1}; 
-   payload.title = document.getElementById("exerciseName").value;
-   if(payload.title == ""){
-      alert("Exercise must be titled");
-      return;
-   }
-   payload.artist = document.getElementById("exerciseReps").value;
-   payload.medium = document.getElementById("exerciseWeight").value;
-   payload.date = document.getElementById("exerciseDate").value;
-   payload.lbs = document.getElementById("exerciseUnits").value;
-   var req = new XMLHttpRequest();
-   req.open("POST", "/", true);
-   req.setRequestHeader("Content-Type", "application/json");
-   req.send(JSON.stringify(payload));
-   req.addEventListener("load",function(){
-      if(req.status >= 200 && req.status < 400){
-         //document.getElementById("addButton").removeEventListener("click", initAddButton);
-         buildTable();
-      }
-      else {
-         console.log("Error: " + req.statusText);
-      }
-   });
-
-};
-
 function initDeleteButtons(button){
    button.addEventListener("click",function(event){
       event.preventDefault();

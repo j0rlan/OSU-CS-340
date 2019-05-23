@@ -1,29 +1,5 @@
 document.addEventListener("DOMContentLoaded", initPage);
 
-function initAddButton(event){
-   event.preventDefault();
-   var payload = {"add":1}; 
-   payload.name = document.getElementById("name").value;
-   if(payload.name == ""){
-      alert("Style must be named");
-      return;
-   }
-   payload.description = document.getElementById("description").value;
-   var req = new XMLHttpRequest();
-   req.open("POST", "/styles", true);
-   req.setRequestHeader("Content-Type", "application/json");
-   req.send(JSON.stringify(payload));
-   req.addEventListener("load",function(){
-      if(req.status >= 200 && req.status < 400){
-         //document.getElementById("addButton").removeEventListener("click", initAddButton);
-         buildTable();
-      }
-      else {
-         console.log("Error: " + req.statusText);
-      }
-   });
-
-};
 
 function initDeleteButtons(button){
    button.addEventListener("click",function(event){
@@ -48,9 +24,9 @@ function submitEdit(id){
    event.preventDefault();
    var req = new XMLHttpRequest();
    var payload = {"edit":id}
-   payload.name = document.getElementById("nameEdit").value;
-   payload.reps = document.getElementById("repsEdit").value;
-   payload.weight = document.getElementById("weightEdit").value;
+   payload.title = document.getElementById("titleEdit").value;
+   payload.artist = document.getElementById("artistEdit").value;
+   payload.medium = document.getElementById("mediumEdit").value;
    payload.date = document.getElementById("dateEdit").value;
    payload.lbs = document.getElementById("lbsEdit").value;
    req.open("POST", "/", true);
@@ -70,24 +46,24 @@ function submitEdit(id){
 function buildForm(id){
    var form = document.createElement("tr");
    form.id = id;
-   var name = document.createElement("td");
-   var nameField = document.createElement("input");
-   nameField.id = "nameEdit";
-   nameField.type = "text";
-   nameField.value = document.getElementById("name"+id).textContent;
-   name.appendChild(nameField);
-   var reps = document.createElement("td");
-   var repsField = document.createElement("input");
-   repsField.id = "repsEdit";
-   repsField.type = "number";
-   repsField.value = document.getElementById("reps"+id).textContent;
-   reps.appendChild(repsField);
-   var weight = document.createElement("td");
-   var weightField = document.createElement("input");
-   weightField.id = "weightEdit";
-   weightField.type = "number";
-   weightField.value = document.getElementById("weight"+id).textContent;
-   weight.appendChild(weightField);
+   var title = document.createElement("td");
+   var titleField = document.createElement("input");
+   titleField.id = "titleEdit";
+   titleField.type = "text";
+   titleField.value = document.getElementById("title"+id).textContent;
+   title.appendChild(titleField);
+   var artist = document.createElement("td");
+   var artistField = document.createElement("input");
+   artistField.id = "artistEdit";
+   artistField.type = "number";
+   artistField.value = document.getElementById("artist"+id).textContent;
+   artist.appendChild(artistField);
+   var medium = document.createElement("td");
+   var mediumField = document.createElement("input");
+   mediumField.id = "mediumEdit";
+   mediumField.type = "number";
+   mediumField.value = document.getElementById("medium"+id).textContent;
+   medium.appendChild(mediumField);
    var date = document.createElement("td");
    var dateField = document.createElement("input");
    dateField.id = "dateEdit";
@@ -96,23 +72,23 @@ function buildForm(id){
    dateParsed = dateParsed.substring(6, 10) + "-" + dateParsed.substring(0, 2) + "-" + dateParsed.substring(3, 5);
    dateField.value = dateParsed;
    date.appendChild(dateField);
-   var units = document.createElement("td");
-   var unitsField = document.createElement("select");
-   unitsField.id = "lbsEdit";
+   var wing = document.createElement("td");
+   var wingField = document.createElement("select");
+   wingField.id = "lbsEdit";
    var lbsOption = document.createElement("option");
    lbsOption.value = "1";
    lbsOption.textContent = "lbs";
    var kgOption = document.createElement("option");
    kgOption.value = "0";
    kgOption.textContent = "kg";
-   if (document.getElementById("units"+id).textContent == "lbs"){
+   if (document.getElementById("wing"+id).textContent == "lbs"){
       lbsOption.selected = "selected";
    } else {
       kgOption.selected = "selected";
    }
-   unitsField.appendChild(lbsOption);
-   unitsField.appendChild(kgOption);
-   units.appendChild(unitsField);
+   wingField.appendChild(lbsOption);
+   wingField.appendChild(kgOption);
+   wing.appendChild(wingField);
 
 
    submitEditButton = document.createElement("button");
@@ -120,11 +96,13 @@ function buildForm(id){
    submitEditButton.addEventListener("click", function(){submitEdit(id)});
 
 
-   form.appendChild(name);
-   form.appendChild(reps);
-   form.appendChild(weight);
+   form.appendChild(title);
+   form.appendChild(artist);
+   form.appendChild(medium);
+   form.appendChild(origin);
+   form.appendChild(style);
    form.appendChild(date);
-   form.appendChild(units);
+   form.appendChild(wing);
    form.appendChild(submitEditButton);
    return form;
 
@@ -144,12 +122,16 @@ function initEditButtons(button){
 function initPage(){
 
    buildTable();
-   bindButtons();
+   // bindButtons();
 };
 
 
 function bindButtons(){
-   document.getElementById("addButton").addEventListener("click", initAddButton);
+   var editButtons = document.getElementsByName("editButton");
+   editButtons.forEach(initEditButtons);
+
+   var deleteButtons = document.getElementsByName("deleteButton");
+   deleteButtons.forEach(initDeleteButtons);
 };
 
 
@@ -162,8 +144,8 @@ function buildTable(){
 
    //create header row
    var row = table.firstElementChild;
-   var headerTitles = ["Exercise", "Reps", "Weight", "Date", "Units"];
-   for(var i = 0; i < 5; i++) {
+   var headerTitles = ["Title", "Artist(s)", "Medium(s)", "Origin", "Style", "Date", "Wing"];
+   for(var i = 0; i < 7; i++) {
       var header = document.createElement("th");
       header.textContent = headerTitles[i];
       row.appendChild(header);
@@ -172,45 +154,43 @@ function buildTable(){
    //fill data rows
 
    var req = new XMLHttpRequest();
-   req.open("POST", "/", true);
+   req.open("POST", "/browse", true);
    req.setRequestHeader("Content-Type", "application/json");
    req.send(JSON.stringify({"init":1}));
    req.addEventListener("load", function(){
       if(req.status >= 200 && req.status < 400) {
          var response = JSON.parse(req.responseText);
+         console.log(response);
          for(var i in response) {
             var row = document.createElement("tr");
-            //row = row.nextElementSibling;
-            var name = document.createElement("td");
-            name.textContent = response[i].name;
-            name.id = "name"+response[i].id;
-            row.appendChild(name);
-            var reps = document.createElement("td");
-            reps.textContent = response[i].reps;
-            reps.id = "reps"+response[i].id;
-            row.appendChild(reps);
-            var weight = document.createElement("td");
-            weight.textContent = response[i].weight;
-            weight.id = "weight"+response[i].id;
-            row.appendChild(weight);
+            var title = document.createElement("td");
+            title.textContent = response[i].Title;
+            title.id = "title"+response[i].id;
+            row.appendChild(title);
+            var artist = document.createElement("td");
+            artist.textContent = response[i].Artist;
+            artist.id = "artist"+response[i].id;
+            row.appendChild(artist);
+            var medium = document.createElement("td");
+            medium.textContent = response[i].Medium;
+            medium.id = "medium"+response[i].id;
+            row.appendChild(medium);
+            var origin = document.createElement("td");
+            origin.textContent = response[i].Origin;
+            origin.id = "origin"+response[i].id;
+            row.appendChild(origin);
+            var style = document.createElement("td");
+            style.textContent = response[i].Style;
+            style.id = "style"+response[i].id;
+            row.appendChild(style);
             var date = document.createElement("td");
-            var dateConverted =  new Date(response[i].date);
-            if (dateConverted != "Invalid Date"){
-               var month = (1+dateConverted.getMonth()).toString();
-               month = month.length > 1 ? month : "0" + month;
-               var day = dateConverted.getDate().toString();
-               day = day.length > 1 ? day : "0" + day;
-               var year = dateConverted.getFullYear();
-               date.textContent = month + "-" + day + "-" + year;
-            } else {
-               date.textContent = "";
-            }
+            date.textContent = response[i].date_completed;
             date.id = "date"+response[i].id;
             row.appendChild(date);
-            var units = document.createElement("td");
-            units.textContent = (response[i].lbs) ? "lbs" : "kg";
-            units.id = "units"+response[i].id;
-            row.appendChild(units);
+            var wing = document.createElement("td");
+            wing.textContent = response[i].wing_name;
+            wing.id = "wing"+response[i].id;
+            row.appendChild(wing);
 
             //create edit and delete buttons
             var commandButtons = document.createElement("td");
@@ -218,11 +198,11 @@ function buildTable(){
             for(var j = 0; j < 2; j++) {
                var button = document.createElement("button");
                button.textContent = labels[j];
-               button.name = labels[j].toLowerCase() + "Button";
+               button.title = labels[j].toLowerCase() + "Button";
                button.id = labels[j].toLowerCase() + "_" +  response[i].id;
-               //fixing closure in loop to add label name as function title
+               //fixing closure in loop to add label title as function title
                (function(x) {
-                  //converting label to function name
+                  //converting label to function title
                   var Action = window[labels[x]];
                   function takeAction() { take(Action); }
                   button.addEventListener("click", takeAction);
@@ -237,9 +217,9 @@ function buildTable(){
 
 
          //add table to html page body
-         var exerciseLog = document.getElementById("exerciseLog");
-         var oldTable = document.getElementById("exerciseLog");
-         exerciseLog.replaceChild(table, exerciseLog.firstChild);
+         var newTable = document.getElementById("artList");
+         //var oldTable = document.getElementById("artList");
+         newTable.replaceChild(table, newTable.firstChild);
          bindButtons();
 
       }

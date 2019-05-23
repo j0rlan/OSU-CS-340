@@ -156,21 +156,43 @@ app.post('/artists', function(req, res){
    console.log(req.body);
 
    if(req.body.add){
-      var fname = req.body.fname, 
-   lname = req.body.lname, 
-   born = req.body.born,
-   died = req.body.died,
-   bio = req.body.bio;
-var params = [fname, lname, born, died, bio];
-var query = "INSERT INTO museum_artist (\`first_name\`, \`last_name\`, \`born\`, \`died\`, \`bio\`) VALUES (?, ?, ?, ?, ?)";
-mysql.pool.query(query, params, function(err, result){
-   if (err){
-      console.log(err);
-      res.write(JSON.stringify(err));
-      res.end();
+      var fname = req.body.fname;
+      var lname = req.body.lname;
+      var born = req.body.born;
+      var died = req.body.died;
+      var bio = req.body.bio;
+      var params = [fname, lname, born, died, bio];
+      var query = "INSERT INTO museum_artist (\`first_name\`, \`last_name\`, \`born\`, \`died\`, \`bio\`) VALUES (?, ?, ?, ?, ?)";
+      mysql.pool.query(query, params, function(err, result){
+         if (err){
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+      });
    }
-});
-}
+
+   if(req.body.init){
+   var query = "SELECT artist_id as id, first_name, last_name, born, died, bio FROM museum_artist";
+   mysql.pool.query(query, function(err, rows, fields) {
+      if (err) {
+         console.log(err);
+         res.write(JSON.stringify(err));
+         res.end();
+      }
+      else {
+         for (e of rows) {
+            let born = new Date(e.born);
+            e.born = (born.getUTCFullYear() + "-" + (born.getUTCMonth()+1) + "-" + born.getUTCDate());
+            let died = new Date(e.died);
+            e.died = (died.getUTCFullYear() + "-" + (died.getUTCMonth()+1) + "-" + died.getUTCDate());
+         }
+         var context = {};
+         context.artists = rows;
+         res.json(rows);
+      }
+   });
+   }
 
 });
 
