@@ -9,31 +9,5 @@
 <button>Wing</button>
 </div>
 </div>
-<div class="container" id="artwork">
-<table>
-	<thead>
-		<th>Title</th>
-		<th>Artist(s)</th>
-		<th>Medium(s)</th>
-		<th>Origin</th>
-		<th>Style</th>
-		<th>Date</th>
-		<th>Wing</th>
-	</thead>
-	<tbody>
-		{{#each works}}
-		<tr>
-			<td>{{this.Title}}</td>
-			<td>{{this.Artist}}</td>
-			<td>{{this.Medium}}</td>
-			<td>{{this.Origin}}</td>
-			<td>{{this.Style}}</td>
-			<td>{{this.date_completed}}</td>
-			<td>{{this.wing_name}}</td>
-			<td><button>Delete</button></td>
-			<td><button>Update</button></td>
-		</tr>
-		{{/each}}
-	</tbody>
-</div>
+<div class ="container" id="artList"><div></div></div>
 <script src="browseScript.js"></script>

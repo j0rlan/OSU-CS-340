@@ -19,28 +19,33 @@ app.get('/', function(req, res){
 });
 
 app.get('/browse', function(req, res){
-   var context = {};
-   var query = "SELECT a.id, title AS Title, group_concat(concat(artist.first_name, ' ', artist.last_name)) AS Artist, concat(c.city, ', ' , c.country) AS Origin, " +  "date_completed, wing_name," +
-   "m.medium_name AS 'Medium', style.style_name AS 'Style' FROM museum_art_piece a " + 
-   "INNER JOIN museum_style_work sw ON sw.work = a.id " + 
-   "INNER JOIN museum_medium_work mw ON mw.work = a.id " + 
-   "INNER JOIN museum_artist_work aw ON aw.work = a.id " + 
-   "INNER JOIN museum_artist artist ON artist.artist_id = aw.artist " + 
-   "INNER JOIN museum_style style ON style.style_name = sw.style " + 
-   "INNER JOIN museum_medium m ON m.medium_name = mw.medium " + 
-   "INNER JOIN museum_city c ON c.city_id = a.city GROUP BY a.id"; 
-mysql.pool.query(query, function(error, results, fields){
-   if(error){
-      console.log(error);
-      res.write(JSON.stringify(error));
-      res.end();
-   }
-   else{
-      context.works = results;
-      console.log(results);
-      res.render('browse', context);
-   }
+   res.render('browse');
 });
+
+app.post("/browse", function(req, res) {
+   var context = {};
+   if (req.body.init) {
+      var query = "SELECT a.id, title AS Title, group_concat(concat(artist.first_name, ' ', artist.last_name)) AS Artist, concat(c.city, ', ' , c.country) AS Origin, ";
+      query += "date_completed, wing_name,";
+      query += "m.medium_name AS 'Medium', style.style_name AS 'Style' FROM museum_art_piece a ";
+      query += "INNER JOIN museum_style_work sw ON sw.work = a.id "; 
+      query += "INNER JOIN museum_medium_work mw ON mw.work = a.id ";
+      query += "INNER JOIN museum_artist_work aw ON aw.work = a.id ";
+      query += "INNER JOIN museum_artist artist ON artist.artist_id = aw.artist ";
+      query += "INNER JOIN museum_style style ON style.style_name = sw.style ";
+      query += "INNER JOIN museum_medium m ON m.medium_name = mw.medium "; 
+      query += "INNER JOIN museum_city c ON c.city_id = a.city GROUP BY a.id"; 
+      mysql.pool.query(query, function(err, rows, fields) {
+         if (err) {
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else{
+            context.works = rows;
+            res.json(context.works);
+         }
+      });
+   }
 });
 
 app.get("/addArtwork", function(req, res){
