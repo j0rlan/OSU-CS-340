@@ -47,9 +47,21 @@ function initAddButton(event){
    var payload = {"add":1}; 
    payload.title = document.getElementById("title").value;
    payload.artist = document.getElementById("artist").value;
+   if (artists.includes(payload.artist) == 0) {
+      alert(payload.artist + " is a new artist. please update on manage page.");
+   }
    payload.medium = document.getElementById("medium").value;
+   if (mediums.includes(payload.medium) == 0) {
+      alert(payload.medium + " is a new medium. please update on manage page.");
+   }
    payload.style = document.getElementById("style").value;
+   if (styles.includes(payload.style) == 0) {
+      alert(payload.style + " is a new style. please update on manage page.");
+   }
    payload.wing = document.getElementById("wing").value;
+   if (wings.includes(payload.wing) == 0) {
+      alert(payload.wing + " is a new wing. please update on manage page.");
+   }
    payload.date = document.getElementById("completed").value;
    payload.city = document.getElementById("city").value;
    payload.country = document.getElementById("country").value;
