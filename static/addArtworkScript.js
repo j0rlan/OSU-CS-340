@@ -12,12 +12,16 @@ function initNewStyleButton(event){
    window.open('/styles', '_blank');
 };
 
+function initNewWingButton(event){
+   window.open('/wings', '_blank');
+};
+
 var artists = [];
 var mediums = [];
 var styles = [];
 var wings = [];
 var req = new XMLHttpRequest();
-var payload = {"artists":1};
+var payload = {"init":1};
 req.open("POST", "/addArtwork", true);
 req.setRequestHeader("Content-Type", "application/json");
 req.send(JSON.stringify(payload));
@@ -37,6 +41,34 @@ req.addEventListener("load", function(){
       console.log("Error: " + req.statusText);
    }
 });
+
+function initAddButton(event){
+   event.preventDefault();
+   var payload = {"add":1}; 
+   payload.title = document.getElementById("title").value;
+   payload.artist = document.getElementById("artist").value;
+   payload.medium = document.getElementById("medium").value;
+   payload.style = document.getElementById("style").value;
+   payload.wing = document.getElementById("wing").value;
+   payload.date = document.getElementById("completed").value;
+   payload.city = document.getElementById("city").value;
+   payload.country = document.getElementById("country").value;
+   payload.description = document.getElementById("description").value;
+   var req = new XMLHttpRequest();
+   req.open("POST", "/addArtwork", true);
+   req.setRequestHeader("Content-Type", "application/json");
+   req.send(JSON.stringify(payload));
+   req.addEventListener("load",function(){
+      if(req.status >= 200 && req.status < 400){
+         // FIXME 
+         // what to do with add request response
+         console.log(req.response);
+      }
+      else {
+         console.log("Error: " + req.statusText);
+      }
+   });
+};
 
 function initPage(){
    bindButtons();
@@ -155,6 +187,19 @@ function bindButtons(){
    }
    try {
    document.getElementById("newStyleButton").addEventListener("click", initNewStyleButton);
+   }
+   catch(err) {
+      console.log(err);
+   }
+   try {
+   document.getElementById("newWingButton").addEventListener("click", initNewStyleButton);
+   }
+   catch(err) {
+      console.log(err);
+   }
+   
+   try {
+   document.getElementById("addButton").addEventListener("click", initAddButton);
    }
    catch(err) {
       console.log(err);

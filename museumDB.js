@@ -49,13 +49,21 @@ app.post("/browse", function(req, res) {
 });
 
 app.get("/addArtwork", function(req, res){
-   var context = {};
-   var wingQuery = "SELECT name FROM museum_wing";
-   res.render('addArtwork', context);
+   res.render('addArtwork');
 });
 
 app.post('/addArtwork', function(req, res){
-   if (req.body.artists) {
+   if (req.body.add) {
+      // FIXME
+      // what to do with request
+      console.log(req.body);
+      context = {};
+      context.response = "test";
+      res.json(context);
+   }
+
+
+   if (req.body.init) {
       var query = "SELECT first_name, last_name FROM museum_artist";
       var context = {};
       context.results = {};
@@ -103,18 +111,7 @@ app.post('/addArtwork', function(req, res){
 });
 
 app.get('/wings', function(req, res){
-   var context = {};
-   var query = "SELECT name, open_time, close_time FROM museum_wing";
-   mysql.pool.query(query, function(error, results, fields){
-      if(error){
-         res.write(JSON.stringify(error));
-         res.end();
-      }
-      else {
-         context.wings = results;
-         res.render('wings', context);
-      }
-   });
+         res.render('wings');
 });
 
 app.post('/wings', function(req, res){
