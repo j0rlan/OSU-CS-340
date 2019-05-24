@@ -26,9 +26,11 @@ function submitEdit(id){
    payload.title = document.getElementById("titleEdit").value;
    payload.artist = document.getElementById("artistEdit").value;
    payload.medium = document.getElementById("mediumEdit").value;
+   payload.origin = document.getElementById("originEdit").value;
+   payload.style = document.getElementById("styleEdit").value;
    payload.date = document.getElementById("dateEdit").value;
-   payload.lbs = document.getElementById("lbsEdit").value;
-   req.open("POST", "/", true);
+   payload.wing = document.getElementById("wingEdit").value;
+   req.open("POST", "/browse", true);
    req.setRequestHeader("Content-Type", "application/json");
    req.send(JSON.stringify(payload));
    req.addEventListener("load",function(){
@@ -54,43 +56,44 @@ function buildForm(id){
    var artist = document.createElement("td");
    var artistField = document.createElement("input");
    artistField.id = "artistEdit";
-   artistField.type = "number";
+   artistField.type = "text";
    artistField.value = document.getElementById("artist"+id).textContent;
    artist.appendChild(artistField);
    var medium = document.createElement("td");
    var mediumField = document.createElement("input");
    mediumField.id = "mediumEdit";
-   mediumField.type = "number";
+   mediumField.type = "text";
    mediumField.value = document.getElementById("medium"+id).textContent;
    medium.appendChild(mediumField);
+   var origin = document.createElement("td");
+   var originField = document.createElement("input");
+   originField.id = "originEdit";
+   originField.type = "text";
+   originField.value = document.getElementById("origin"+id).textContent;
+   origin.appendChild(originField);
+   var style = document.createElement("td");
+   var styleField = document.createElement("input");
+   styleField.id = "styleEdit";
+   styleField.type = "text";
+   styleField.value = document.getElementById("style"+id).textContent;
+   style.appendChild(styleField);
    var date = document.createElement("td");
    var dateField = document.createElement("input");
    dateField.id = "dateEdit";
    dateField.type = "date";
    var dateParsed = document.getElementById("date"+id).textContent;
-   dateParsed = dateParsed.substring(6, 10) + "-" + dateParsed.substring(0, 2) + "-" + dateParsed.substring(3, 5);
    dateField.value = dateParsed;
    date.appendChild(dateField);
    var wing = document.createElement("td");
-   var wingField = document.createElement("select");
-   wingField.id = "lbsEdit";
-   var lbsOption = document.createElement("option");
-   lbsOption.value = "1";
-   lbsOption.textContent = "lbs";
-   var kgOption = document.createElement("option");
-   kgOption.value = "0";
-   kgOption.textContent = "kg";
-   if (document.getElementById("wing"+id).textContent == "lbs"){
-      lbsOption.selected = "selected";
-   } else {
-      kgOption.selected = "selected";
-   }
-   wingField.appendChild(lbsOption);
-   wingField.appendChild(kgOption);
+   var wingField = document.createElement("input");
+   wingField.id = "wingEdit";
+   wingField.type = "text";
+   wingField.value = document.getElementById("wing"+id).textContent;
    wing.appendChild(wingField);
 
 
    submitEditButton = document.createElement("button");
+   submitEditButton.id = "updateEdit";
    submitEditButton.textContent = "update";
    submitEditButton.addEventListener("click", function(){submitEdit(id)});
 
@@ -143,8 +146,8 @@ function buildTable(){
 
    //create header row
    var row = table.firstElementChild;
-   var headerTitles = ["Title", "Artist(s)", "Medium(s)", "Origin", "Style", "Date", "Wing"];
-   for(var i = 0; i < 7; i++) {
+   var headerTitles = ["Title", "Artist(s)", "Medium(s)", "Origin", "Style", "Date", "Wing", "Manage"];
+   for(var i = 0; i < 8; i++) {
       var header = document.createElement("th");
       header.textContent = headerTitles[i];
       row.appendChild(header);
@@ -159,7 +162,6 @@ function buildTable(){
    req.addEventListener("load", function(){
       if(req.status >= 200 && req.status < 400) {
          var response = JSON.parse(req.responseText);
-         console.log(response);
          for(var i in response) {
             var row = document.createElement("tr");
             var title = document.createElement("td");
@@ -183,7 +185,16 @@ function buildTable(){
             style.id = "style"+response[i].id;
             row.appendChild(style);
             var date = document.createElement("td");
-            date.textContent = response[i].date_completed;
+            var dateParsed = response[i].date_completed;
+            var dateConverted = "";
+            if (dateParsed.substring(5, 7) != "00") {
+               dateConverted += dateParsed.substring(5, 7) + "/";
+            }
+            if (dateParsed.substring(8, 10) != "00") {
+               dateConverted += dateParsed.substring(8, 10) + "/";
+            }
+            dateConverted += dateParsed.substring(0, 4);
+            date.textContent = dateConverted;
             date.id = "date"+response[i].id;
             row.appendChild(date);
             var wing = document.createElement("td");
@@ -197,7 +208,7 @@ function buildTable(){
             for(var j = 0; j < 2; j++) {
                var button = document.createElement("button");
                button.textContent = labels[j];
-               button.title = labels[j].toLowerCase() + "Button";
+               button.name = labels[j].toLowerCase() + "Button";
                button.id = labels[j].toLowerCase() + "_" +  response[i].id;
                //fixing closure in loop to add label title as function title
                (function(x) {
@@ -217,7 +228,6 @@ function buildTable(){
 
          //add table to html page body
          var newTable = document.getElementById("artList");
-         //var oldTable = document.getElementById("artList");
          newTable.replaceChild(table, newTable.firstChild);
          bindButtons();
 
