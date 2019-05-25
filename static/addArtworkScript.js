@@ -27,10 +27,17 @@ req.addEventListener("load", function(){
 
 function initAddButton(event){
    event.preventDefault();
+   var mediumResult = document.getElementById("medium").checkValidity();
+   var styleResult = document.getElementById("style").checkValidity();
+   var wingResult = document.getElementById("wing").checkValidity();
+   if (mediumResult == false || styleResult == false || wingResult == false) {
+      alert("please ensure that medium, style, and wing are filled out");
+      return;
+   }
    var payload = {"add":1}; 
    payload.title = document.getElementById("title").value;
    payload.artist = document.getElementById("artist").value;
-   if (artists.includes(payload.artist) == 0) {
+   if (artists.includes(payload.artist) == 0 && payload.artist != "") {
       alert(payload.artist + " is a new artist. please update on manage page.");
    }
    payload.medium = document.getElementById("medium").value;
