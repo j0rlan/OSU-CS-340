@@ -74,7 +74,11 @@ function initAddButton(event){
       if(req.status >= 200 && req.status < 400){
          // FIXME 
          // what to do with add request response
-         console.log(req.response);
+		 var responseStatus = JSON.parse(req.response);
+		 alert(responseStatus.reponse);
+         if(req.response = "Success"){
+		 	res.redirect('/browse');
+		}
       }
       else {
          console.log("Error: " + req.statusText);
@@ -169,7 +173,7 @@ function autocomplete(inp, arr) {
     }
   }
   function closeAllLists(elmnt) {
-    /*close all autocomplete lists in the document,
+   /*close all autocomplete lists in the document,
     except the one passed as an argument:*/
     var x = document.getElementsByClassName("autocomplete-items");
     for (var i = 0; i < x.length; i++) {

@@ -57,11 +57,75 @@ app.post('/addArtwork', function(req, res){
       // FIXME
       // what to do with request
       console.log(req.body);
-      context = {};
-      context.response = "test";
-      res.json(context);
-   }
-
+	  var cityQuery = "INSERT IGNORE INTO museum_city (`city`, `country`) ";
+	  cityQuery += "VALUES (?, ?)";
+	  var cityParameters = [req.body.city, req.body.country];
+	  mysql.pool.query(cityQuery, cityParameters, function(err, result){
+	  	if(err){
+			console.log(err);
+			res.write(JSON.stringify(err));
+	  	    res.end();
+		}
+		else {
+			var cityIdQuery = "SELECT city_id FROM museum_city c WHERE c.city = '" + req.body.city + "' AND c.country = '" + req.body.country + "'";
+			mysql.pool.query(cityIdQuery, function(err, result1){
+				if(err){
+					console.log(err);
+					res.write(JSON.stringify(err));	
+		            res.end();
+				}
+				else {
+					console.log("Getting city");
+					console.log(result1[0].city_id);
+					var query = "INSERT INTO museum_art_piece (`title`, `city`, `date_completed`, `description`, `wing_name`) VALUES (?,?,?,?,?)";
+					var parameters = [req.body.title, result1[0].city_id, req.body.date, req.body.description, req.body.wing];
+					mysql.pool.query(query, parameters, function(err, result2){
+						if(err){
+							console.log(err);
+							res.write(JSON.stringify(err));
+                            res.end();
+						}
+						else{
+							console.log("Getting work id");
+							var workIdQuery = "SELECT id FROM museum_art_piece WHERE `title` ='" + req.body.title + "'";
+							mysql.pool.query(workIdQuery, function(err, result3){
+								if(err){
+									console.log(err);
+									res.write(JSON.stringify(err));
+                                    res.end();
+								}
+								else {
+									insertMedium(req.body.medium, result3[0].id);
+									insertStyle(req.body.style, result3[0].id);
+									var artistName = req.body.artist.split(" ");
+									console.log(artistName);
+									var artistIdQuery = "SELECT artist_id FROM museum_artist WHERE `first_name` = '" + artistName[0];
+									artistIdQuery += "' AND `last_name` = '" + artistName[1] + "'";
+									mysql.pool.query(artistIdQuery, function(err, result4){
+										if(err){
+											console.log(err);
+											res.write(JSON.stringify(err));
+                                            res.end();
+										}
+										else {
+											insertArtist(result4[0].artist_id, result3[0].id);
+											var context = {};	
+											context.response = "success";  
+                                            res.json(context);
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+		}
+					
+	  });
+	  	
+	  	
+  }
 
    if (req.body.init) {
       var query = "SELECT first_name, last_name FROM museum_artist";
@@ -109,6 +173,56 @@ app.post('/addArtwork', function(req, res){
       });
    }
 });
+
+function getWorkId(title){
+	var workIdQuery = "SELECT `id` FROM museum_art_piece WHERE `title` = '";
+	workIdQuery += title + "'";
+	mysql.pool.query(workIdQuery, function(err, result){
+		if(err){
+			console.log(err);
+		}
+		else {
+			console.log("work id is result[0].id");
+			return result[0].id;
+		}
+	});
+};
+
+function insertMedium(medium, work_id){
+	var mediumIdQuery = "INSERT INTO museum_medium_work (`medium`, `work`) "
+	mediumIdQuery += "VALUES (?,?)";
+	var wkparams = [medium, work_id];
+	console.log("Insert that medium");
+	mysql.pool.query(mediumIdQuery, wkparams, function(err, result){
+		if(err){
+			console.log(err);
+		}
+	});
+}
+
+function insertStyle(style, work_id){
+	var insertStyleQuery = "INSERT INTO museum_style_work (`style`, `work`)";
+	insertStyleQuery += " VALUES (?, ?)";
+	var wkparams = [style, work_id];
+	console.log("Insert Style");
+	mysql.pool.query(insertStyleQuery, wkparams, function(err, result){
+		if(err){
+			console.log(err);
+		}
+	});
+}
+
+function insertArtist(artist, work_id){
+	var insertArtistQuery = "INSERT INTO museum_artist_work (`artist`, `work`)";
+	insertArtistQuery += " VALUES (?, ?)";
+	var wkparams = [artist, work_id];
+	console.log("Insert Artist");
+	mysql.pool.query(insertArtistQuery, wkparams, function(err, result){
+		if(err){
+			console.log(err);
+		}
+	});
+}
 
 app.get('/wings', function(req, res){
          res.render('wings');
@@ -282,6 +396,19 @@ app.use(function(err, req, res, next){
    res.render('500');
 });
 
+function getCityId(city, country){
+	 var cityIdQuery = "SELECT city_id FROM museum_city c WHERE c.city ='" + city + "' AND c.country = '" + country + "'";
+	 mysql.pool.query(cityIdQuery, function(err, result){
+	 	if(err){
+			console.log(err);
+			return NULL;
+		}
+		else{
+			console.log(result[0].city_id);
+			return (result[0].city_id);
+		}
+	});
+}
+
 app.listen(app.get('port'), function(){
-   console.log('Express started on http://flip3.engr.oregonstate.edu:' + app.get('port') + '; press Ctrl-C to terminate.');
-});
+   console.log('Express started on http://flip3.engr.oregonstate.edu:' + app.get('port') + '; press Ctrl-C to terminate.'); });
