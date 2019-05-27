@@ -272,6 +272,11 @@ app.get('/artists', function(req, res){
 
 app.post('/artists', function(req, res){
    console.log(req.body);
+   console.log(req.path);
+
+   if(req.body.del){
+
+   }
 
    if(req.body.add){
       var fname = req.body.fname;

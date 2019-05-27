@@ -5,12 +5,12 @@ function initDeleteButtons(button){
       event.preventDefault();
       var req = new XMLHttpRequest();
       var payload = {"del":button.parentElement.parentElement.id};
-      req.open("POST", "/", true);
+      req.open("POST", "/artists", true);
       req.setRequestHeader("Content-Type", "application/json");
       req.send(JSON.stringify(payload));
       req.addEventListener("load",function(){
          if(req.status >= 200 && req.status < 400){
-            buildTable();
+            console.log("response noted");
          }
          else {
             console.log("Error: " + req.statusText);
@@ -189,7 +189,7 @@ function buildTable(){
             for(var j = 0; j < 2; j++) {
                var button = document.createElement("button");
                button.textContent = labels[j];
-               button.title = labels[j].toLowerCase() + "Button";
+               button.name = labels[j].toLowerCase() + "Button";
                button.id = labels[j].toLowerCase() + "_" +  response[i].id;
                //fixing closure in loop to add label title as function title
                (function(x) {
