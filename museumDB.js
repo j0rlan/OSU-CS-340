@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
-app.set('port', 5943);
+app.set('port', 5944);
 
 app.get('/', function(req, res){
    res.render('home');
@@ -45,6 +45,12 @@ app.post("/browse", function(req, res) {
             res.json(context.works);
          }
       });
+   }
+
+   if (req.body.edit) {
+      console.log("edit");
+      res.render('browse');
+
    }
 });
 
@@ -295,9 +301,9 @@ app.post('/artists', function(req, res){
          else {
             for (e of rows) {
                let born = new Date(e.born);
-               e.born = (born.getUTCFullYear() + "-" + (born.getUTCMonth()+1) + "-" + born.getUTCDate());
+               e.born = ((born.getUTCMonth()+1) + "/" + born.getUTCDate() + "/" + born.getUTCFullYear());
                let died = new Date(e.died);
-               e.died = (died.getUTCFullYear() + "-" + (died.getUTCMonth()+1) + "-" + died.getUTCDate());
+               e.died = ((died.getUTCMonth()+1) + "/" + died.getUTCDate() + "/" + died.getUTCFullYear());
             }
             var context = {};
             context.artists = rows;

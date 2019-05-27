@@ -1,21 +1,5 @@
 document.addEventListener("DOMContentLoaded", initPage);
 
-function initNewArtistButton(event){
-   window.open('/artists', '_blank');
-};
-
-function initNewMediumButton(event){
-   window.open('/mediums', '_blank');
-};
-
-function initNewStyleButton(event){
-   window.open('/styles', '_blank');
-};
-
-function initNewWingButton(event){
-   window.open('/wings', '_blank');
-};
-
 var artists = [];
 var mediums = [];
 var styles = [];
@@ -28,7 +12,6 @@ req.send(JSON.stringify(payload));
 req.addEventListener("load", function(){
    if(req.status >= 200 && req.status < 400){
       var list = JSON.parse(req.response);
-      console.log(list);
       for (e in list.artists) { artists.push(list.artists[e].first_name + " " + list.artists[e].last_name); }
 
       for (e in list.mediums) { mediums.push(list.mediums[e].medium_name); }
@@ -44,10 +27,17 @@ req.addEventListener("load", function(){
 
 function initAddButton(event){
    event.preventDefault();
+   var mediumResult = document.getElementById("medium").checkValidity();
+   var styleResult = document.getElementById("style").checkValidity();
+   var wingResult = document.getElementById("wing").checkValidity();
+   if (mediumResult == false || styleResult == false || wingResult == false) {
+      alert("please ensure that medium, style, and wing are filled out");
+      return;
+   }
    var payload = {"add":1}; 
    payload.title = document.getElementById("title").value;
    payload.artist = document.getElementById("artist").value;
-   if (artists.includes(payload.artist) == 0) {
+   if (artists.includes(payload.artist) == 0 && payload.artist != "") {
       alert(payload.artist + " is a new artist. please update on manage page.");
    }
    payload.medium = document.getElementById("medium").value;
@@ -87,7 +77,7 @@ function initAddButton(event){
 };
 
 function initPage(){
-   bindButtons();
+   bindAddButton();
    addAutocomplete();
 };
 
@@ -188,32 +178,7 @@ document.addEventListener("click", function (e) {
 });
 }
 
-function bindButtons(){
-   try {
-   document.getElementById("newArtistButton").addEventListener("click", initNewArtistButton);
-   }
-   catch(err) {
-      console.log(err);
-   }
-   try {
-   document.getElementById("newMediumButton").addEventListener("click", initNewMediumButton);
-   }
-   catch(err) {
-      console.log(err);
-   }
-   try {
-   document.getElementById("newStyleButton").addEventListener("click", initNewStyleButton);
-   }
-   catch(err) {
-      console.log(err);
-   }
-   try {
-   document.getElementById("newWingButton").addEventListener("click", initNewStyleButton);
-   }
-   catch(err) {
-      console.log(err);
-   }
-   
+function bindAddButton(){
    try {
    document.getElementById("addButton").addEventListener("click", initAddButton);
    }
