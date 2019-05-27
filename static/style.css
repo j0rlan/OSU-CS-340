@@ -100,3 +100,7 @@ td {
 [id*='delete_'] {
    width: 5em;
 }
+
+[id*='Edit'] {
+   width: 100%;
+}
