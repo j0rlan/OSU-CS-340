@@ -47,6 +47,29 @@ app.post("/browse", function(req, res) {
       });
    }
 
+   if (req.body.filter) {
+      var query = "SELECT * FROM (SELECT a.id, title AS Title, group_concat(concat(artist.first_name, ' ', artist.last_name)) AS Artist, concat(c.city, ', ' , c.country) AS Origin, ";
+      query += "date_completed, wing_name AS Wing,";
+      query += "m.medium_name AS 'Medium', style.style_name AS 'Style' FROM museum_art_piece a ";
+      query += "INNER JOIN museum_style_work sw ON sw.work = a.id "; 
+      query += "INNER JOIN museum_medium_work mw ON mw.work = a.id ";
+      query += "INNER JOIN museum_artist_work aw ON aw.work = a.id ";
+      query += "INNER JOIN museum_artist artist ON artist.artist_id = aw.artist ";
+      query += "INNER JOIN museum_style style ON style.style_name = sw.style ";
+      query += "INNER JOIN museum_medium m ON m.medium_name = mw.medium "; 
+      query += "INNER JOIN museum_city c ON c.city_id = a.city GROUP BY a.id) AS artworks WHERE artworks." + req.body.filter + " = ?"; 
+      mysql.pool.query(query, req.body.value, function(err, rows, fields) {
+         if (err) {
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else{
+            context.works = rows;
+            res.json(context.works);
+         }
+      })
+   }
+
    if (req.body.edit) {
       console.log("edit");
       res.render('browse');

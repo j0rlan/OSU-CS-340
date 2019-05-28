@@ -3,20 +3,28 @@
 </div>
 <div class="container">View by:
    <div class="autocomplete">
-      <input type="text" name="artist" placeholder="Artist" id="artist">
-      <button>go</button>
+      <form action="/browse" method="post" name="filter">
+         <input type="text" name="value" placeholder="Artist" id="artist">
+         <input type="submit" value ="Artist" name="filter">
+      </form>
    </div>
    <div class="autocomplete">
-      <input type="text" name="medium" placeholder="Medium" id="medium">
-      <button>go</button>
+      <form action="/browse" method="post" name="filter">
+         <input type="text" name="value" placeholder="Medium" id="medium">
+         <input type="submit" value ="Medium" name="filter">
+      </form>
    </div>
    <div class="autocomplete">
-      <input type="text" name="style" placeholder="Style" id="style">
-      <button>go</button>
+      <form action="/browse" method="post" name="filter">
+         <input type="text" name="value" placeholder="Style" id="style">
+         <input type="submit" value ="Style" name="filter">
+      </form>
    </div>
    <div class="autocomplete">
-      <input type="text" name="wing" placeholder="Wing" id="wing">
-      <button>go</button>
+      <form action="/browse" method="post" name="filter">
+         <input type="text" name="value" placeholder="Wing" id="wing">
+         <input type="submit" value ="Wing" name="filter">
+      </form>
    </div>
 </div>
 <div class ="container" id="artList"><div></div></div>
