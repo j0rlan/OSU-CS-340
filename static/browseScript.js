@@ -5,7 +5,7 @@ function initDeleteButtons(button){
       event.preventDefault();
       var req = new XMLHttpRequest();
       var payload = {"del":button.parentElement.parentElement.id};
-      req.open("POST", "/", true);
+      req.open("POST", "/browse", true);
       req.setRequestHeader("Content-Type", "application/json");
       req.send(JSON.stringify(payload));
       req.addEventListener("load",function(){

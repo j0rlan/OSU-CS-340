@@ -50,7 +50,23 @@ app.post("/browse", function(req, res) {
    if (req.body.edit) {
       console.log("edit");
       res.render('browse');
+   }
 
+   if (req.body.del) {
+      console.log("delete");
+      console.log(req.body);
+      var params = [Number(req.body.del)];
+      var query = "DELETE from museum_art_piece WHERE id = ?;";
+      mysql.pool.query(query, params, function(err, result) {
+         if (err) {
+            console.log(err);
+            res.write(JSON.stringify(err));
+            res.end();
+         }
+         else {
+            res.render('browse');
+         }
+      });
    }
 });
 
@@ -83,7 +99,7 @@ app.post('/addArtwork', function(req, res){
                   console.log("Getting city");
                   console.log(result1[0].city_id);
                   var query = "INSERT INTO museum_art_piece (`title`, `city`, `date_completed`, `description`, `wing_name`) VALUES (?,?,?,?,?)";
-                  var parameters = [req.body.title, result1[0].city_id, req.body.date, req.body.description, req.body.wing];
+                  var parameters = [(req.body.title ? req.body.title : "untitled"), result1[0].city_id, req.body.date, req.body.description, req.body.wing];
                   mysql.pool.query(query, parameters, function(err, result2){
                      if(err){
                         console.log(err);
@@ -92,8 +108,8 @@ app.post('/addArtwork', function(req, res){
                      }
                      else{
                         console.log("Getting work id");
-                        var workIdQuery = "SELECT id FROM museum_art_piece WHERE `title` ='" + req.body.title + "'";
-                        mysql.pool.query(workIdQuery, function(err, result3){
+                        var workIdQuery = "SELECT id FROM museum_art_piece WHERE `title` = ?";
+                        mysql.pool.query(workIdQuery, [parameters[0]], function(err, result3){
                            if(err){
                               console.log(err);
                               res.write(JSON.stringify(err));
@@ -104,20 +120,22 @@ app.post('/addArtwork', function(req, res){
                               insertStyle(req.body.style, result3[0].id);
                               var artistName = req.body.artist.split(" ");
                               console.log(artistName);
-                              var artistIdQuery = "SELECT artist_id FROM museum_artist WHERE `first_name` = '" + artistName[0];
-                              artistIdQuery += "' AND `last_name` = '" + artistName[1] + "'";
-                              mysql.pool.query(artistIdQuery, function(err, result4){
-                                 if(err){
-                                    console.log(err);
-                                    res.write(JSON.stringify(err));
-                                    res.end();
-                                 }
-                                 else {
-                                    insertArtist(result4[0].artist_id, result3[0].id);
-                                    var context = {};	
-                                    context.response = "success";  
-                                    res.json(context);
-                                 }
+                              artistParams = [artistName[0] ? artistName[0] : "unknown", artistName[1] ? artistName[1] : " "];
+                              mysql.pool.query("INSERT IGNORE INTO museum_artist (first_name, last_name) VALUES (?, ?)", artistParams, function(err, result) {
+                                 var artistIdQuery = "SELECT artist_id FROM museum_artist WHERE `first_name` = ? and last_name = ?";
+                                 mysql.pool.query(artistIdQuery, artistParams, function(err, result4){
+                                    if(err){
+                                       console.log(err);
+                                       res.write(JSON.stringify(err));
+                                       res.end();
+                                    }
+                                    else {
+                                       insertArtist(result4[0].artist_id, result3[0].id);
+                                       var context = {};	
+                                       context.response = "success";  
+                                       res.json(context);
+                                    }
+                                 });
                               });
                            }
                         });
@@ -194,26 +212,28 @@ function getWorkId(title){
 };
 
 function insertMedium(medium, work_id){
-   var mediumIdQuery = "INSERT INTO museum_medium_work (`medium`, `work`) "
+   mysql.pool.query("INSERT IGNORE INTO museum_medium (medium_name) VALUES (?)", [medium], function(err, result){
+      var mediumIdQuery = "INSERT INTO museum_medium_work (`medium`, `work`) ";
       mediumIdQuery += "VALUES (?,?)";
-   var wkparams = [medium, work_id];
-   console.log("Insert that medium");
-   mysql.pool.query(mediumIdQuery, wkparams, function(err, result){
-      if(err){
-         console.log(err);
-      }
+      var wkparams = [medium, work_id];
+      mysql.pool.query(mediumIdQuery, wkparams, function(err, result){
+         if(err){
+            console.log(err);
+         }
+      });
    });
 }
 
 function insertStyle(style, work_id){
-   var insertStyleQuery = "INSERT INTO museum_style_work (`style`, `work`)";
-   insertStyleQuery += " VALUES (?, ?)";
-   var wkparams = [style, work_id];
-   console.log("Insert Style");
-   mysql.pool.query(insertStyleQuery, wkparams, function(err, result){
-      if(err){
-         console.log(err);
-      }
+   mysql.pool.query("INSERT IGNORE INTO museum_style (style_name) VALUES (?)", [style], function(err, result) {
+      var insertStyleQuery = "INSERT INTO museum_style_work (`style`, `work`)";
+      insertStyleQuery += " VALUES (?, ?)";
+      var wkparams = [style, work_id];
+      mysql.pool.query(insertStyleQuery, wkparams, function(err, result){
+         if(err){
+            console.log(err);
+         }
+      });
    });
 }
 
@@ -221,7 +241,6 @@ function insertArtist(artist, work_id){
    var insertArtistQuery = "INSERT INTO museum_artist_work (`artist`, `work`)";
    insertArtistQuery += " VALUES (?, ?)";
    var wkparams = [artist, work_id];
-   console.log("Insert Artist");
    mysql.pool.query(insertArtistQuery, wkparams, function(err, result){
       if(err){
          console.log(err);
