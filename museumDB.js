@@ -62,7 +62,6 @@ app.post('/addArtwork', function(req, res){
    if (req.body.add) {
       // FIXME
       // what to do with request
-      console.log(req.body);
       var cityQuery = "INSERT IGNORE INTO museum_city (`city`, `country`) ";
       cityQuery += "VALUES (?, ?)";
       var cityParameters = [req.body.city, req.body.country];
@@ -303,8 +302,8 @@ app.get('/artists', function(req, res){
 
 app.post('/artists', function(req, res){
    if(req.body.edit){
-      var query = "SELECT * from museum_artist WHERE artist_id = ?";
-      var params = [Number(req.body.edit)];
+      var query = "UPDATE museum_artist SET first_name = ?, last_name = ?, born = CONVERT(?, DATE), died = CONVERT(?, DATE), bio = ? WHERE artist_id = ?;";
+      var params = [req.body.fname, req.body.lname, req.body.born, req.body.died, req.body.bio, Number(req.body.edit)];
       mysql.pool.query(query, params, function(err, rows, fields){
          if (err) {
             console.log(err);

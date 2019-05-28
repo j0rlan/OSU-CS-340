@@ -61,16 +61,13 @@ function buildForm(id){
    var bornField = document.createElement("input");
    bornField.id = "bornEdit";
    bornField.type = "date";
-   bornField.value = document.getElementById("born"+id).textContent;
+   bornField.valueAsDate = new Date(document.getElementById("born"+id).textContent);
    born.appendChild(bornField);
    var died = document.createElement("td");
    var diedField = document.createElement("input");
    diedField.id = "diedEdit";
    diedField.type = "date";
-   diedDate = new Date(document.getElementById("died"+id).textContent).toISOString();
-   diedField.value = new Date(document.getElementById("died"+id).textContent);
-   console.log(diedDate);
-   console.log(typeof(diedDate));
+   diedField.valueAsDate = new Date(document.getElementById("died"+id).textContent);
    died.appendChild(diedField);
    var bio = document.createElement("td");
    var bioField = document.createElement("input");
