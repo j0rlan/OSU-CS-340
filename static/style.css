@@ -104,3 +104,7 @@ td {
 [id*='Edit'] {
    width: 100%;
 }
+
+#updateButton {
+   width: 5em;
+}
