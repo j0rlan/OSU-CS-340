@@ -37,8 +37,12 @@ function initAddButton(event){
    var payload = {"add":1}; 
    payload.title = document.getElementById("title").value;
    payload.artist = document.getElementById("artist").value;
+   payload.artist2 = document.getElementById("artist2").value;
    if (artists.includes(payload.artist) == 0 && payload.artist != "") {
       alert(payload.artist + " is a new artist. please update on manage page.");
+   }
+   if (artists.includes(payload.artist2) == 0 && payload.artist2 != "") {
+   	  alert(payload.artist2 + "is a new artist. please update on manage page.");
    }
    payload.medium = document.getElementById("medium").value;
    if (mediums.includes(payload.medium) == 0) {
@@ -65,9 +69,9 @@ function initAddButton(event){
          // FIXME 
          // what to do with add request response
 		 var responseStatus = JSON.parse(req.response);
-		 alert(responseStatus.reponse);
-         if(req.response = "Success"){
-		 	res.redirect('/browse');
+		 
+         if(req.responseStatus = "Success"){
+		 	document.getElementById("addResult").textContext = "Addition was successful!";	
 		}
       }
       else {
@@ -189,6 +193,7 @@ function bindAddButton(){
 
 function addAutocomplete(){
    autocomplete(document.getElementById("artist"), artists);
+   autocomplete(document.getElementById("artist2"), artists);
    autocomplete(document.getElementById("style"), styles);
    autocomplete(document.getElementById("medium"), mediums);
    autocomplete(document.getElementById("wing"), wings);

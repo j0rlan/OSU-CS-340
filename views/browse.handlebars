@@ -1,29 +1,35 @@
 <div class="container">
    <h3>Artwork</h3>
 </div>
-<div class="container">View by:
+<div class="container">
+	Search Title
    <div class="autocomplete">
-      <form action="/browse" method="post" name="filter">
+	  	<input type="text" name="titleSearch" placeholder="Title" id="titleSearch">
+		<input type="submit" value="Search" name="search" id="searchSubmit">
+   </div>
+	View by:
+   <div class="autocomplete">
+      <form action="/brows" method="post" name="filter">
          <input type="text" name="value" placeholder="Artist" id="artist">
-         <input type="submit" value ="Artist" name="filter">
+         <input type="submit" value="Artist" name="filterCat">
       </form>
    </div>
    <div class="autocomplete">
       <form action="/browse" method="post" name="filter">
          <input type="text" name="value" placeholder="Medium" id="medium">
-         <input type="submit" value ="Medium" name="filter">
+         <input type="submit" value ="Medium" name="filterCat">
       </form>
    </div>
    <div class="autocomplete">
       <form action="/browse" method="post" name="filter">
          <input type="text" name="value" placeholder="Style" id="style">
-         <input type="submit" value ="Style" name="filter">
+         <input type="submit" value ="Style" name="filterCat">
       </form>
    </div>
    <div class="autocomplete">
       <form action="/browse" method="post" name="filter">
          <input type="text" name="value" placeholder="Wing" id="wing">
-         <input type="submit" value ="Wing" name="filter">
+         <input type="submit" value ="Wing" name="filterCat">
       </form>
    </div>
 </div>

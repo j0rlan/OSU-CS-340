@@ -57,8 +57,8 @@ app.post("/browse", function(req, res) {
       query += "INNER JOIN museum_artist artist ON artist.artist_id = aw.artist ";
       query += "INNER JOIN museum_style style ON style.style_name = sw.style ";
       query += "INNER JOIN museum_medium m ON m.medium_name = mw.medium "; 
-      query += "INNER JOIN museum_city c ON c.city_id = a.city GROUP BY a.id) AS artworks WHERE artworks." + req.body.filter + " = ?"; 
-      mysql.pool.query(query, req.body.value, function(err, rows, fields) {
+      query += "INNER JOIN museum_city c ON c.city_id = a.city GROUP BY a.id) AS artworks WHERE artworks." + req.body.filterCat + " = ?"; 
+      mysql.pool.query(query, req.body.filterEnt, function(err, rows, fields) {
          if (err) {
             res.write(JSON.stringify(err));
             res.end();
@@ -91,6 +91,31 @@ app.post("/browse", function(req, res) {
          }
       });
    }
+
+   if(req.body.search) {
+	 var query = "SELECT * FROM (SELECT a.id, title AS Title, group_concat(concat(artist.first_name, ' ', artist.last_name)) AS Artist, ";
+	 query+= "concat(c.city, ', ' , c.country) AS Origin, ";
+	 query += "date_completed, wing_name, ";                                                                                                                
+	 query += "m.medium_name AS 'Medium', style.style_name AS 'Style' FROM museum_art_piece a ";
+	 query += "INNER JOIN museum_style_work sw ON sw.work = a.id ";
+	 query += "INNER JOIN museum_medium_work mw ON mw.work = a.id ";
+	 query += "INNER JOIN museum_artist_work aw ON aw.work = a.id ";
+	 query += "INNER JOIN museum_artist artist ON artist.artist_id = aw.artist ";
+	 query += "INNER JOIN museum_style style ON style.style_name = sw.style ";
+	 query += "INNER JOIN museum_medium m ON m.medium_name = mw.medium ";
+	 query += "INNER JOIN museum_city c ON c.city_id = a.city GROUP BY a.id) AS Artworks WHERE Title LIKE '%" + req.body.search + "%'";
+	 mysql.pool.query(query, params, function(err, result){
+		if(err) {
+	      console.log(err);
+	      res.write(JSON.stringify(err));
+	      res.end();                                                                                                        	
+	    }
+		else {
+	      context.responseText = result;
+   		  res.send(context.responseText);
+		}
+	});
+  }
 });
 
 app.get("/addArtwork", function(req, res){
@@ -121,7 +146,7 @@ app.post('/addArtwork', function(req, res){
                else {
                   console.log("Getting city");
                   console.log(result1[0].city_id);
-                  var query = "INSERT INTO museum_art_piece (`title`, `city`, `date_completed`, `description`, `wing_name`) VALUES (?,?,?,?,?)";
+                  var query = "INSERT IGNORE INTO museum_art_piece (`title`, `city`, `date_completed`, `description`, `wing_name`) VALUES (?,?,?,?,?)";
                   var parameters = [(req.body.title ? req.body.title : "untitled"), result1[0].city_id, req.body.date, req.body.description, req.body.wing];
                   mysql.pool.query(query, parameters, function(err, result2){
                      if(err){
@@ -141,7 +166,9 @@ app.post('/addArtwork', function(req, res){
                            else {
                               insertMedium(req.body.medium, result3[0].id);
                               insertStyle(req.body.style, result3[0].id);
-                              var artistName = req.body.artist.split(" ");
+                              var artistName = [];
+							  artistName[0] = req.body.artist.substr(0, req.body.artist.indexOf(' '));
+							  artistName[1] = req.body.artist.substr(req.body.artist.indexOf(' ')+1);
                               console.log(artistName);
                               artistParams = [artistName[0] ? artistName[0] : "unknown", artistName[1] ? artistName[1] : " "];
                               mysql.pool.query("INSERT IGNORE INTO museum_artist (first_name, last_name) VALUES (?, ?)", artistParams, function(err, result) {
@@ -155,10 +182,24 @@ app.post('/addArtwork', function(req, res){
                                     else {
                                        insertArtist(result4[0].artist_id, result3[0].id);
                                        var context = {};	
-                                       context.response = "success";  
+                                       context.response = "Success";  
                                        res.json(context);
-                                    }
-                                 });
+									   if (req.body.artist2){
+									   		var artistName2 = [];
+											artistName2[0] = req.body.artist2.substr(0, req.body.artist2.indexOf(' '));
+											artistName2[1] = req.body.artist2.substr(req.body.artist2.indexOf(' ')+1);
+											var artistParams2  = [artistName2[0] ? artistName2[0] : "unknown", artistName2[1] ? artistName2[1] : " "];
+											mysql.pool.query(artistIdQuery, artistParams2, function(err, result5){
+												if(err){
+													console.log(err);
+												}
+												else {
+                  									insertArtist(result5[0].artist_id, result3[0].id);
+												}
+											});
+									   }
+									}
+								});
                               });
                            }
                         });
@@ -261,7 +302,7 @@ function insertStyle(style, work_id){
 }
 
 function insertArtist(artist, work_id){
-   var insertArtistQuery = "INSERT INTO museum_artist_work (`artist`, `work`)";
+   var insertArtistQuery = "INSERT IGNORE INTO museum_artist_work (`artist`, `work`)";
    insertArtistQuery += " VALUES (?, ?)";
    var wkparams = [artist, work_id];
    mysql.pool.query(insertArtistQuery, wkparams, function(err, result){

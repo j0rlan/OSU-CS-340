@@ -19,6 +19,27 @@ function initDeleteButtons(button){
    });
 };
 
+function bindSearchButton(){
+	document.getElementById("searchSubmit").addEventListener("click", function(event){
+		event.preventDefault();
+		var searchCriteria = document.getElementById("titleSearch").value;	
+		buildTable({"search": searchCriteria});
+	});
+}
+
+function bindFilterButtons(){
+	var filterButtons = document.getElementsByName("filterCat");
+	filterButtons.forEach(function(arrayElement){
+		arrayElement.addEventListener("click", function(event){
+			event.preventDefault();
+			var filterCategory = arrayElement.value;
+			var filterEntry = arrayElement.previousElementSibling.value;
+			buildTable({"filter": 1, "filterCat": filterCategory, "filterEnt": filterEntry});
+		});
+	});
+}
+
+			
 function submitEdit(id){
    event.preventDefault();
    var req = new XMLHttpRequest();
@@ -123,7 +144,9 @@ function initEditButtons(button){
 
 function initPage(){
 
-   buildTable();
+   buildTable({"init":1});
+   bindSearchButton();
+   bindFilterButtons();
    // bindButtons();
 };
 
@@ -137,7 +160,7 @@ function bindButtons(){
 };
 
 
-function buildTable(){
+function buildTable(payload){
    //create table
    var table = document.createElement("table");
    table.id = "exerciseTable";
@@ -158,7 +181,7 @@ function buildTable(){
    var req = new XMLHttpRequest();
    req.open("POST", "/browse", true);
    req.setRequestHeader("Content-Type", "application/json");
-   req.send(JSON.stringify({"init":1}));
+   req.send(JSON.stringify(payload));
    req.addEventListener("load", function(){
       if(req.status >= 200 && req.status < 400) {
          var response = JSON.parse(req.responseText);
